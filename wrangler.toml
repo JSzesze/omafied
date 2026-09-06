@@ -1,0 +1,32 @@
+# Omafied — Cloudflare Worker + D1 + static assets.
+#
+# Deploy to workers.dev first. Do not attach a custom domain here:
+# omafied.com is already on Vercel.
+#
+# Cloudflare placeholders — Jason fills these in before deploy:
+#   1. wrangler d1 create omafied
+#   2. set account_id and database_id below
+#   3. wrangler d1 migrations apply omafied --remote
+#   4. wrangler deploy
+
+name = "omafied"
+main = "src/index.ts"
+compatibility_date = "2026-09-06"
+workers_dev = true
+
+# CF placeholder — replace with the account id from the Cloudflare dashboard.
+account_id = "CF_ACCOUNT_ID"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "404-page"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "omafied"
+# CF placeholder — replace with the uuid printed by `wrangler d1 create omafied`.
+database_id = "CF_D1_DATABASE_ID"
+migrations_dir = "migrations"

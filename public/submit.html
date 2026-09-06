@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Submit a laptop — Omafied</title>
+<meta name="description" content="Report a laptop running Omarchy. Community-reported, not official Omarchy.">
+<link rel="canonical" href="/submit">
+<meta name="theme-color" content="#0a0b0a">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTOlOV.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUXskPMA.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/pxiKyp0ihIEF2isfFJU.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="bar-l">
+      <a class="mark" href="/" aria-label="Omafied, laptop compatibility">
+        <svg class="logo" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" fill="currentColor"><path d="M0 0h15v1h-15z"/><path d="M0 1h1v14h-1z"/><path d="M7 1h1v2h-1z"/><path d="M14 1h1v14h-1z"/><path d="M2 2h5v1h-5z"/><path d="M11 2h2v1h-2z"/><path d="M2 3h1v10h-1z"/><path d="M12 3h1v10h-1z"/><path d="M1 7h1v1h-1z"/><path d="M3 12h9v1h-9z"/><path d="M7 13h1v2h-1z"/><path d="M1 14h6v1h-6z"/><path d="M9 14h5v1h-5z"/></svg>
+        <h1 class="wordmark">omafied</h1>
+      </a>
+      <a class="home" href="https://omarchy.org" target="_blank" rel="noopener">omarchy.org &#8599;</a>
+    </div>
+    <div class="bar-r">
+      <p class="tagline">community-reported · not official omarchy</p>
+    </div>
+  </header>
+
+  <section class="intro" aria-label="About">
+    <div class="scan" aria-hidden="true"></div>
+    <p class="intro-kicker">live submit · no account</p>
+    <h2 class="intro-title">Report a laptop</h2>
+    <p class="intro-sub">Laptops only. Be honest — unknown and partial are better than a silent pass. Not official Omarchy.</p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">new report</h2>
+      <div class="head-btns">
+        <a class="back" href="/">back to the table</a>
+      </div>
+    </div>
+
+    <form class="form-wrap" id="submitForm" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label for="brand">brand</label>
+          <input id="brand" name="brand" type="text" maxlength="64" required autocomplete="off" placeholder="Framework">
+        </div>
+        <div class="field">
+          <label for="model">model</label>
+          <input id="model" name="model" type="text" maxlength="128" required autocomplete="off" placeholder="13 AMD">
+        </div>
+        <div class="field">
+          <label for="year">year</label>
+          <input id="year" name="year" type="number" min="1995" max="2036" step="1" inputmode="numeric" placeholder="2024">
+          <p class="hint">optional</p>
+        </div>
+        <div class="field">
+          <label for="reporter">reporter</label>
+          <input id="reporter" name="reporter" type="text" maxlength="64" autocomplete="nickname" placeholder="handle or name">
+          <p class="hint">optional · shown on the row</p>
+        </div>
+
+        <div class="field span-2">
+          <label>wifi</label>
+          <div class="status-seg" data-seg="wifi">
+            <div class="seg">
+              <button type="button" class="seg-b" data-field="wifi" data-value="works">works</button>
+              <button type="button" class="seg-b" data-field="wifi" data-value="partial">partial</button>
+              <button type="button" class="seg-b" data-field="wifi" data-value="broken">broken</button>
+              <button type="button" class="seg-b is-on" data-field="wifi" data-value="unknown">unknown</button>
+            </div>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>gpu</label>
+          <div class="status-seg" data-seg="gpu">
+            <div class="seg">
+              <button type="button" class="seg-b" data-field="gpu" data-value="works">works</button>
+              <button type="button" class="seg-b" data-field="gpu" data-value="partial">partial</button>
+              <button type="button" class="seg-b" data-field="gpu" data-value="broken">broken</button>
+              <button type="button" class="seg-b is-on" data-field="gpu" data-value="unknown">unknown</button>
+            </div>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>sleep</label>
+          <div class="status-seg" data-seg="sleep">
+            <div class="seg">
+              <button type="button" class="seg-b" data-field="sleep" data-value="works">works</button>
+              <button type="button" class="seg-b" data-field="sleep" data-value="partial">partial</button>
+              <button type="button" class="seg-b" data-field="sleep" data-value="broken">broken</button>
+              <button type="button" class="seg-b is-on" data-field="sleep" data-value="unknown">unknown</button>
+            </div>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>audio</label>
+          <div class="status-seg" data-seg="audio">
+            <div class="seg">
+              <button type="button" class="seg-b" data-field="audio" data-value="works">works</button>
+              <button type="button" class="seg-b" data-field="audio" data-value="partial">partial</button>
+              <button type="button" class="seg-b" data-field="audio" data-value="broken">broken</button>
+              <button type="button" class="seg-b is-on" data-field="audio" data-value="unknown">unknown</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field span-2">
+          <label for="notes">notes</label>
+          <textarea id="notes" name="notes" maxlength="2000" placeholder="Kernel, firmware, what actually failed, what you did about it."></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="go" id="submitBtn">send report</button>
+        <p class="form-msg" id="formMsg">no account · no moderation in v1</p>
+      </div>
+    </form>
+  </section>
+
+  <footer class="foot">
+    <p class="status"><span class="pulse" aria-hidden="true"></span><span id="status">ready</span></p>
+    <p class="disclaimer">not official omarchy</p>
+    <div class="picker">
+      <button type="button" class="picker-btn" id="themeBtn" aria-expanded="false" aria-controls="themeMenu" aria-haspopup="listbox">
+        <span class="picker-name">
+          <span class="sw-ac" aria-hidden="true"></span>
+          <span id="skinName">green</span>
+        </span>
+        <span class="caret" id="themeCaret" aria-hidden="true">&#9660;</span>
+      </button>
+      <ul class="menu" id="themeMenu" role="listbox" aria-label="Colour theme" hidden></ul>
+    </div>
+  </footer>
+</div>
+<script src="/assets/js/theme.js" defer></script>
+<script src="/assets/js/submit.js" defer></script>
+</body>
+</html>

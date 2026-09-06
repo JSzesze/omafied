@@ -1,0 +1,22 @@
+{
+  "name": "omafied",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Community table of laptops that run Omarchy.",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types",
+    "check": "tsc --noEmit",
+    "db:migrate:local": "wrangler d1 migrations apply omafied --local",
+    "db:migrate:remote": "wrangler d1 migrations apply omafied --remote"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260903.1",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.80.0"
+  }
+}

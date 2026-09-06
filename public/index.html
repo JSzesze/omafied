@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Omafied — Omarchy laptop compatibility</title>
+<meta name="description" content="Community table of laptops that run Omarchy. Community-reported, not official Omarchy.">
+<link rel="canonical" href="/">
+<meta name="theme-color" content="#0a0b0a">
+<meta name="color-scheme" content="dark light">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTOlOV.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUXskPMA.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/pxiKyp0ihIEF2isfFJU.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="bar-l">
+      <a class="mark" href="/" aria-label="Omafied, laptop compatibility">
+        <svg class="logo" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" fill="currentColor"><path d="M0 0h15v1h-15z"/><path d="M0 1h1v14h-1z"/><path d="M7 1h1v2h-1z"/><path d="M14 1h1v14h-1z"/><path d="M2 2h5v1h-5z"/><path d="M11 2h2v1h-2z"/><path d="M2 3h1v10h-1z"/><path d="M12 3h1v10h-1z"/><path d="M1 7h1v1h-1z"/><path d="M3 12h9v1h-9z"/><path d="M7 13h1v2h-1z"/><path d="M1 14h6v1h-6z"/><path d="M9 14h5v1h-5z"/></svg>
+        <h1 class="wordmark">omafied</h1>
+      </a>
+      <a class="home" href="https://omarchy.org" target="_blank" rel="noopener">omarchy.org &#8599;</a>
+    </div>
+    <div class="bar-r">
+      <p class="tagline">community-reported · not official omarchy</p>
+    </div>
+  </header>
+
+  <section class="intro" aria-label="About">
+    <div class="scan" aria-hidden="true"></div>
+    <p class="intro-kicker">community · laptops only</p>
+    <h2 class="intro-title">Laptop compatibility</h2>
+    <p class="intro-sub">Reports from people running Omarchy. Not an official list. Wi-Fi, GPU, sleep, audio — as they found them.</p>
+  </section>
+
+  <section class="panel" aria-label="Laptop reports">
+    <div class="panel-head">
+      <h2 class="panel-title">laptops — omarchy</h2>
+      <div class="head-btns">
+        <a class="back" href="/submit">submit a report</a>
+      </div>
+    </div>
+
+    <div class="tools">
+      <label class="search">
+        <span class="search-lbl">find</span>
+        <input id="q" type="search" placeholder="brand, model, notes…" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="filter">
+        <span class="filter-lbl">brand</span>
+        <select id="brandFilter">
+          <option value="">all</option>
+        </select>
+      </label>
+      <label class="filter">
+        <span class="filter-lbl">wifi</span>
+        <select id="wifiFilter">
+          <option value="">any</option>
+          <option value="works">works</option>
+          <option value="partial">partial</option>
+          <option value="broken">broken</option>
+          <option value="unknown">unknown</option>
+        </select>
+      </label>
+      <label class="filter">
+        <span class="filter-lbl">gpu</span>
+        <select id="gpuFilter">
+          <option value="">any</option>
+          <option value="works">works</option>
+          <option value="partial">partial</option>
+          <option value="broken">broken</option>
+          <option value="unknown">unknown</option>
+        </select>
+      </label>
+      <label class="filter">
+        <span class="filter-lbl">sleep</span>
+        <select id="sleepFilter">
+          <option value="">any</option>
+          <option value="works">works</option>
+          <option value="partial">partial</option>
+          <option value="broken">broken</option>
+          <option value="unknown">unknown</option>
+        </select>
+      </label>
+      <label class="filter">
+        <span class="filter-lbl">audio</span>
+        <select id="audioFilter">
+          <option value="">any</option>
+          <option value="works">works</option>
+          <option value="partial">partial</option>
+          <option value="broken">broken</option>
+          <option value="unknown">unknown</option>
+        </select>
+      </label>
+    </div>
+
+    <p class="legend" aria-hidden="true">
+      <span class="st-works"><i></i>works</span>
+      <span class="st-partial"><i></i>partial</span>
+      <span class="st-broken"><i></i>broken</span>
+      <span class="st-unknown"><i></i>unknown</span>
+    </p>
+
+    <div class="tr-head">
+      <span>brand</span>
+      <span>model</span>
+      <span>year</span>
+      <span>wifi</span>
+      <span>gpu</span>
+      <span>sleep</span>
+      <span>audio</span>
+      <span>notes</span>
+      <span class="ta-r" style="text-align:right">reporter</span>
+    </div>
+    <ul class="rows" id="rows"></ul>
+    <p class="empty" id="empty" hidden>loading…</p>
+    <p class="panel-note" id="count">loading reports</p>
+  </section>
+
+  <footer class="foot">
+    <p class="status"><span class="pulse" aria-hidden="true"></span><span id="status">ready</span></p>
+    <p class="disclaimer">not official omarchy</p>
+    <div class="picker">
+      <button type="button" class="picker-btn" id="themeBtn" aria-expanded="false" aria-controls="themeMenu" aria-haspopup="listbox">
+        <span class="picker-name">
+          <span class="sw-ac" aria-hidden="true"></span>
+          <span id="skinName">green</span>
+        </span>
+        <span class="caret" id="themeCaret" aria-hidden="true">&#9660;</span>
+      </button>
+      <ul class="menu" id="themeMenu" role="listbox" aria-label="Colour theme" hidden></ul>
+    </div>
+  </footer>
+</div>
+<script src="/assets/js/theme.js" defer></script>
+<script src="/assets/js/board.js" defer></script>
+</body>
+</html>
