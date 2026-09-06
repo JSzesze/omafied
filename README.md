@@ -104,8 +104,8 @@ Seed rows: Framework 13/16, Dell XPS, ThinkPad — honest `unknown` / `partial` 
 
 Self-hosted under `public/assets/fonts/` from the official [vercel/geist-font](https://github.com/vercel/geist-font) release (SIL OFL 1.1, `OFL.txt` next to the woff2 files). No Google Fonts CDN.
 
-- **Geist Mono** — UI, body, table (`--mono`, `--sans`)
-- **Geist Pixel Square** — display / LCD / wordmark (`--lcdfont`)
+- **Geist Mono** — body, chips, filters, notes, meta (`--mono`, `--sans`)
+- **Geist Pixel Square** — large display accents only: wordmark, intro title, tier (`--lcdfont`)
 
 ## Out of scope (v1)
 

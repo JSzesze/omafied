@@ -61,19 +61,42 @@
     var light = lum(bg) > 0.5;
     var deep = light ? "#ffffff" : "#000000";
     var lcd = mix(bg, deep, light ? 0.55 : 0.5);
+    var st = light
+      ? {
+          works: "#1d8a4e",
+          partial: "#9a6f00",
+          fiddly: "#c45c12",
+          broken: "#c62828",
+          avoid: "#8b4040",
+          unknown: "#5a5e58"
+        }
+      : {
+          works: "#5ef2a0",
+          partial: "#f5c542",
+          fiddly: "#f08a3a",
+          broken: "#ff6b6b",
+          avoid: "#c47a7a",
+          unknown: "#9aa19a"
+        };
     return {
       name: t.name, bg: bg, fg: fg, ac: ac, bd: bd,
       bdF: mix(bd, bg, 0.55),
-      c2: mix(fg, bg, 0.48),
-      c3: mix(fg, bg, 0.7),
+      c2: mix(fg, bg, 0.30),
+      c3: mix(fg, bg, 0.48),
       rowOn: mix(ac, bg, 0.88),
       rowHov: mix(fg, bg, 0.93),
       trk: mix(fg, bg, 0.85),
       lcd: lcd,
       acFg: lum(ac) > 0.55 ? mix(bg, "#000000", 0.35) : "#ffffff",
       acHi: mix(ac, light ? "#000000" : "#ffffff", 0.3),
-      g1: mix(ac, lcd, 0.45),
+      g1: mix(ac, light ? bg : fg, light ? 0.22 : 0.38),
       g2: mix(ac, lcd, 0.62),
+      stWorks: st.works,
+      stPartial: st.partial,
+      stFiddly: st.fiddly,
+      stBroken: st.broken,
+      stAvoid: st.avoid,
+      stUnknown: st.unknown,
       light: light
     };
   }
@@ -98,6 +121,12 @@
     r.setProperty("--acHi", k.acHi);
     r.setProperty("--g1", k.g1);
     r.setProperty("--g2", k.g2);
+    r.setProperty("--st-works", k.stWorks);
+    r.setProperty("--st-partial", k.stPartial);
+    r.setProperty("--st-fiddly", k.stFiddly);
+    r.setProperty("--st-broken", k.stBroken);
+    r.setProperty("--st-avoid", k.stAvoid);
+    r.setProperty("--st-unknown", k.stUnknown);
     r.setProperty("--scan", "repeating-linear-gradient(180deg, " +
       (k.light ? "rgba(0,0,0,.055) 0 1px, transparent 1px 4px"
                : "rgba(0,0,0,.42) 0 2px, transparent 2px 4px") + ")");

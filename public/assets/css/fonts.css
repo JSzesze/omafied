@@ -1,5 +1,6 @@
 /* Official Vercel Geist (SIL OFL 1.1). Source: https://github.com/vercel/geist-font
-   Geist Mono — UI / body / table. Geist Pixel Square — display / LCD accents.
+   Geist Mono — body, chips, filters, notes, meta, any UI ≤14px.
+   Geist Pixel Square — large display accents only (wordmark, intro title, tier).
    See public/assets/fonts/OFL.txt. */
 
 @font-face {
