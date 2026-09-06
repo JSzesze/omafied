@@ -10,9 +10,8 @@
 <meta name="color-scheme" content="dark light">
 <meta name="robots" content="index, follow">
 <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTOlOV.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUXskPMA.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/pxiKyp0ihIEF2isfFJU.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/GeistMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/GeistPixel-Square.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fonts.css">
 <link rel="stylesheet" href="/assets/css/style.css">
 </head>
@@ -35,7 +34,7 @@
     <div class="scan" aria-hidden="true"></div>
     <p class="intro-kicker">community · laptops only</p>
     <h2 class="intro-title">Laptop compatibility</h2>
-    <p class="intro-sub">Reports from people running Omarchy. Not an official list. Wi-Fi, GPU, sleep, audio — as they found them.</p>
+    <p class="intro-sub">Will it run, and will you like it. Tier and sweet-spot first. Wi-Fi, GPU, sleep, audio still on the row. Not official Omarchy.</p>
   </section>
 
   <section class="panel" aria-label="Laptop reports">
@@ -55,6 +54,26 @@
         <span class="filter-lbl">brand</span>
         <select id="brandFilter">
           <option value="">all</option>
+        </select>
+      </label>
+      <label class="filter">
+        <span class="filter-lbl">tier</span>
+        <select id="tierFilter">
+          <option value="">any</option>
+          <option value="daily">daily</option>
+          <option value="works">works</option>
+          <option value="fiddly">fiddly</option>
+          <option value="avoid">avoid</option>
+        </select>
+      </label>
+      <label class="filter">
+        <span class="filter-lbl">battery</span>
+        <select id="batteryFilter">
+          <option value="">any</option>
+          <option value="works">works</option>
+          <option value="partial">partial</option>
+          <option value="broken">broken</option>
+          <option value="unknown">unknown</option>
         </select>
       </label>
       <label class="filter">
@@ -100,6 +119,12 @@
     </div>
 
     <p class="legend" aria-hidden="true">
+      <span class="legend-k">buy</span>
+      <span class="tier-daily"><i></i>daily</span>
+      <span class="tier-works"><i></i>works</span>
+      <span class="tier-fiddly"><i></i>fiddly</span>
+      <span class="tier-avoid"><i></i>avoid</span>
+      <span class="legend-k">run</span>
       <span class="st-works"><i></i>works</span>
       <span class="st-partial"><i></i>partial</span>
       <span class="st-broken"><i></i>broken</span>
@@ -110,12 +135,9 @@
       <span>brand</span>
       <span>model</span>
       <span>year</span>
-      <span>wifi</span>
-      <span>gpu</span>
-      <span>sleep</span>
-      <span>audio</span>
-      <span>notes</span>
-      <span class="ta-r" style="text-align:right">reporter</span>
+      <span>tier</span>
+      <span>sweet spot</span>
+      <span class="ta-r">agree</span>
     </div>
     <ul class="rows" id="rows"></ul>
     <p class="empty" id="empty" hidden>loading…</p>

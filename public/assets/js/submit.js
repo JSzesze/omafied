@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var FIELDS = ["wifi", "gpu", "sleep", "audio"];
+  var SEG_FIELDS = ["wifi", "gpu", "sleep", "audio", "tier", "battery", "fingerprint", "build"];
 
   var $ = function (id) { return document.getElementById(id); };
 
@@ -18,30 +18,43 @@
     el.className = "form-msg" + (kind ? " is-" + kind : "");
   }
 
-  function selected(field) {
+  function selected(field, fallback) {
     var on = document.querySelector('[data-field="' + field + '"].is-on');
-    return on ? on.getAttribute("data-value") : "unknown";
+    return on ? on.getAttribute("data-value") : fallback;
+  }
+
+  function optionalInt(id) {
+    var raw = $(id).value.trim();
+    if (raw === "") return null;
+    var n = Number(raw);
+    return n;
   }
 
   function payload() {
-    var yearRaw = $("year").value.trim();
-    var year = yearRaw === "" ? null : Number(yearRaw);
-    var body = {
+    return {
       brand: $("brand").value,
       model: $("model").value,
-      year: year,
-      wifi: selected("wifi"),
-      gpu: selected("gpu"),
-      sleep: selected("sleep"),
-      audio: selected("audio"),
+      year: optionalInt("year"),
+      wifi: selected("wifi", "unknown"),
+      gpu: selected("gpu", "unknown"),
+      sleep: selected("sleep", "unknown"),
+      audio: selected("audio", "unknown"),
       notes: $("notes").value,
-      reporter: $("reporter").value
+      reporter: $("reporter").value,
+      tier: selected("tier", "works"),
+      battery: selected("battery", "unknown"),
+      fingerprint: selected("fingerprint", "unknown"),
+      build: selected("build", "unknown"),
+      quirks: $("quirks").value,
+      uniques: $("uniques").value,
+      cost: optionalInt("cost"),
+      used_cost: optionalInt("used_cost"),
+      sweet_spot: $("sweet_spot").value
     };
-    return body;
   }
 
   function wireSegs() {
-    FIELDS.forEach(function (field) {
+    SEG_FIELDS.forEach(function (field) {
       var wrap = document.querySelector('[data-seg="' + field + '"]');
       if (!wrap) return;
       wrap.addEventListener("click", function (e) {
@@ -64,6 +77,16 @@
     }
     if (body.year != null && (isNaN(body.year) || !Number.isInteger(body.year))) {
       msg("year must be an integer", "err");
+      setStatus("invalid");
+      return;
+    }
+    if (body.cost != null && (isNaN(body.cost) || !Number.isInteger(body.cost))) {
+      msg("cost must be an integer", "err");
+      setStatus("invalid");
+      return;
+    }
+    if (body.used_cost != null && (isNaN(body.used_cost) || !Number.isInteger(body.used_cost))) {
+      msg("used cost must be an integer", "err");
       setStatus("invalid");
       return;
     }
