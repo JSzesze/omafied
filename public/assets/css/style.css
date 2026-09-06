@@ -371,6 +371,21 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .filter:focus-within { border-color: var(--ac); }
 
+/* Desktop: same inline toolbar. Mobile sheet chrome is display:none here. */
+.tools-bar,
+.filters-layer,
+.filters-panel,
+.filters-fields {
+  display: contents;
+}
+
+.filters-btn,
+.filters-chrome,
+.filters-backdrop,
+.filter-chips {
+  display: none;
+}
+
 /* ── data table ──────────────────────────────────────── */
 
 .table-wrap {
@@ -909,7 +924,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 .home, .tagline, .picker-btn, .menu button,
 .panel-title, .intro-kicker, .intro-sub, .board thead th, .model-meta,
-.st, .back, .seg-b, .search-lbl, .filter-lbl, .panel-note,
+.st, .back, .seg-b, .search-lbl, .filter-lbl, .filters-btn, .filters-done,
+.filters-clear, .filters-title, .filter-chip, .panel-note,
 .foot, .status, .field label, .go, .form-msg, .legend, .disclaimer,
 .form-sec, .chip-lbl, .detail-k, .detail-ident, .detail-vote-n {
   font-weight: var(--wt-small);
@@ -918,7 +934,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 900px) {
   :root {
     --tools-gap: 12px;
-    --tools-pad: 6px 16px 20px;
+    --tools-pad: 6px 16px 12px;
     --legend-gap: 10px 16px;
     --legend-pad: 12px 16px 20px;
     --row-gap: 18px;
@@ -964,7 +980,182 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .form-grid { grid-template-columns: 1fr; }
   .field.span-2, .form-sec.span-2 { grid-column: auto; }
 
-  .filter, .search { width: 100%; min-width: 0; }
+  .tools {
+    flex-direction: column;
+    align-items: stretch;
+    --tools-pad: 6px 16px 12px;
+  }
+
+  .tools-bar {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .search {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+    height: 44px;
+  }
+
+  .filters-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: none;
+    min-width: 6.6rem;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--bd);
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--fg);
+    white-space: nowrap;
+  }
+  .filters-btn:hover,
+  .filters-btn[aria-expanded="true"] { border-color: var(--ac); color: var(--ac); }
+
+  .filters-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.3rem;
+    height: 1.3rem;
+    padding: 0 5px;
+    background: var(--ac);
+    color: var(--acFg);
+    font-size: 10px;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+  .filters-badge[hidden] { display: none; }
+
+  .filters-layer {
+    display: none;
+  }
+  .filters-layer.is-open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+  }
+
+  .filters-backdrop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+  }
+  .filters-backdrop[hidden] { display: none; }
+
+  .filters-panel {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: min(78dvh, 36rem);
+    overflow: auto;
+    background: var(--bg);
+    border-top: 1px solid var(--ac);
+    padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .filters-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filter {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+  }
+
+  .filters-chrome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .filters-chrome-top { margin-bottom: 14px; }
+  .filters-chrome-bot { margin-top: 14px; }
+
+  .filters-title {
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--c2);
+  }
+
+  .filters-done {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--ac);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ac);
+  }
+  .filters-done:hover { background: var(--ac); color: var(--acFg); }
+
+  .filters-clear {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--bd);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--c2);
+  }
+  .filters-clear:hover { border-color: var(--fg); color: var(--fg); }
+
+  .filter-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    overflow-x: auto;
+    padding: 2px 0 4px;
+    scrollbar-width: thin;
+  }
+  .filter-chips[hidden] { display: none; }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    height: 32px;
+    padding: 0 6px 0 10px;
+    border: 1px solid var(--bd);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--fg);
+    white-space: nowrap;
+  }
+  .filter-chip:hover { border-color: var(--ac); color: var(--ac); }
+
+  .filter-chip-x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    color: var(--c2);
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  body.filters-open { overflow: hidden; }
+
   .tools .back { min-height: 44px; }
   .seg-b, .picker-btn, .go { min-height: 44px; }
   .menu button { min-height: 44px; }

@@ -46,76 +46,99 @@
     </div>
 
     <div class="tools">
-      <label class="search">
-        <span class="search-lbl">find</span>
-        <input id="q" type="search" placeholder="brand, model, notes…" autocomplete="off" spellcheck="false">
-      </label>
-      <label class="filter">
-        <span class="filter-lbl">brand</span>
-        <select id="brandFilter">
-          <option value="">all</option>
-        </select>
-      </label>
-      <label class="filter">
-        <span class="filter-lbl">tier</span>
-        <select id="tierFilter">
-          <option value="">any</option>
-          <option value="daily">daily</option>
-          <option value="works">works</option>
-          <option value="fiddly">fiddly</option>
-          <option value="avoid">avoid</option>
-        </select>
-      </label>
-      <label class="filter">
-        <span class="filter-lbl">battery</span>
-        <select id="batteryFilter">
-          <option value="">any</option>
-          <option value="works">works</option>
-          <option value="partial">partial</option>
-          <option value="broken">broken</option>
-          <option value="unknown">unknown</option>
-        </select>
-      </label>
-      <label class="filter">
-        <span class="filter-lbl">wifi</span>
-        <select id="wifiFilter">
-          <option value="">any</option>
-          <option value="works">works</option>
-          <option value="partial">partial</option>
-          <option value="broken">broken</option>
-          <option value="unknown">unknown</option>
-        </select>
-      </label>
-      <label class="filter">
-        <span class="filter-lbl">gpu</span>
-        <select id="gpuFilter">
-          <option value="">any</option>
-          <option value="works">works</option>
-          <option value="partial">partial</option>
-          <option value="broken">broken</option>
-          <option value="unknown">unknown</option>
-        </select>
-      </label>
-      <label class="filter">
-        <span class="filter-lbl">sleep</span>
-        <select id="sleepFilter">
-          <option value="">any</option>
-          <option value="works">works</option>
-          <option value="partial">partial</option>
-          <option value="broken">broken</option>
-          <option value="unknown">unknown</option>
-        </select>
-      </label>
-      <label class="filter">
-        <span class="filter-lbl">audio</span>
-        <select id="audioFilter">
-          <option value="">any</option>
-          <option value="works">works</option>
-          <option value="partial">partial</option>
-          <option value="broken">broken</option>
-          <option value="unknown">unknown</option>
-        </select>
-      </label>
+      <div class="tools-bar">
+        <label class="search">
+          <span class="search-lbl">find</span>
+          <input id="q" type="search" placeholder="brand, model, notes…" autocomplete="off" spellcheck="false">
+        </label>
+        <button type="button" class="filters-btn" id="filtersBtn" aria-expanded="false" aria-controls="filtersPanel" aria-haspopup="dialog">
+          filters
+          <span class="filters-badge" id="filtersBadge" hidden></span>
+        </button>
+      </div>
+
+      <div class="filters-layer" id="filtersLayer">
+        <div class="filters-backdrop" id="filtersBackdrop" hidden></div>
+        <div class="filters-panel" id="filtersPanel">
+          <div class="filters-chrome filters-chrome-top">
+            <p class="filters-title" id="filtersTitle">filters</p>
+            <button type="button" class="filters-done" id="filtersDone">done</button>
+          </div>
+          <div class="filters-fields">
+            <label class="filter">
+              <span class="filter-lbl">brand</span>
+              <select id="brandFilter">
+                <option value="">all</option>
+              </select>
+            </label>
+            <label class="filter">
+              <span class="filter-lbl">tier</span>
+              <select id="tierFilter">
+                <option value="">any</option>
+                <option value="daily">daily</option>
+                <option value="works">works</option>
+                <option value="fiddly">fiddly</option>
+                <option value="avoid">avoid</option>
+              </select>
+            </label>
+            <label class="filter">
+              <span class="filter-lbl">battery</span>
+              <select id="batteryFilter">
+                <option value="">any</option>
+                <option value="works">works</option>
+                <option value="partial">partial</option>
+                <option value="broken">broken</option>
+                <option value="unknown">unknown</option>
+              </select>
+            </label>
+            <label class="filter">
+              <span class="filter-lbl">wifi</span>
+              <select id="wifiFilter">
+                <option value="">any</option>
+                <option value="works">works</option>
+                <option value="partial">partial</option>
+                <option value="broken">broken</option>
+                <option value="unknown">unknown</option>
+              </select>
+            </label>
+            <label class="filter">
+              <span class="filter-lbl">gpu</span>
+              <select id="gpuFilter">
+                <option value="">any</option>
+                <option value="works">works</option>
+                <option value="partial">partial</option>
+                <option value="broken">broken</option>
+                <option value="unknown">unknown</option>
+              </select>
+            </label>
+            <label class="filter">
+              <span class="filter-lbl">sleep</span>
+              <select id="sleepFilter">
+                <option value="">any</option>
+                <option value="works">works</option>
+                <option value="partial">partial</option>
+                <option value="broken">broken</option>
+                <option value="unknown">unknown</option>
+              </select>
+            </label>
+            <label class="filter">
+              <span class="filter-lbl">audio</span>
+              <select id="audioFilter">
+                <option value="">any</option>
+                <option value="works">works</option>
+                <option value="partial">partial</option>
+                <option value="broken">broken</option>
+                <option value="unknown">unknown</option>
+              </select>
+            </label>
+          </div>
+          <div class="filters-chrome filters-chrome-bot">
+            <button type="button" class="filters-clear" id="filtersClear">clear</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-chips" id="filterChips" hidden></div>
     </div>
 
     <p class="legend" aria-hidden="true">

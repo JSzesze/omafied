@@ -6,6 +6,15 @@
   var TIERS = ["daily", "works", "fiddly", "avoid"];
   var BUILDS = ["tank", "solid", "meh", "unknown"];
   var RUN_FIELDS = ["wifi", "gpu", "sleep", "audio"];
+  var FILTER_FIELDS = [
+    { id: "brandFilter", label: "brand" },
+    { id: "tierFilter", label: "tier" },
+    { id: "batteryFilter", label: "battery" },
+    { id: "wifiFilter", label: "wifi" },
+    { id: "gpuFilter", label: "gpu" },
+    { id: "sleepFilter", label: "sleep" },
+    { id: "audioFilter", label: "audio" }
+  ];
   var LIKE_FIELDS = [
     { key: "battery", label: "batt" },
     { key: "build", label: "build" },
@@ -16,6 +25,7 @@
 
   var laptops = [];
   var openId = null;
+  var sheetOpen = false;
 
   var $ = function (id) { return document.getElementById(id); };
 
@@ -92,6 +102,93 @@
       sel.appendChild(o);
     });
     if (current) sel.value = current;
+  }
+
+  function mobileFilters() {
+    return window.matchMedia("(max-width: 900px)").matches;
+  }
+
+  function activeFilters() {
+    var out = [];
+    FILTER_FIELDS.forEach(function (f) {
+      var el = $(f.id);
+      if (el && el.value) out.push({ id: f.id, label: f.label, value: el.value });
+    });
+    return out;
+  }
+
+  function syncFilterChrome() {
+    var active = activeFilters();
+    var badge = $("filtersBadge");
+    if (badge) {
+      badge.hidden = active.length === 0;
+      badge.textContent = String(active.length);
+    }
+
+    var chips = $("filterChips");
+    if (!chips) return;
+    chips.innerHTML = "";
+    if (!active.length) {
+      chips.hidden = true;
+      return;
+    }
+    chips.hidden = false;
+    active.forEach(function (f) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "filter-chip";
+      btn.setAttribute("data-filter-id", f.id);
+      btn.setAttribute("aria-label", "clear " + f.label + " " + f.value);
+      var text = document.createElement("span");
+      text.textContent = f.label + " · " + f.value;
+      var x = document.createElement("span");
+      x.className = "filter-chip-x";
+      x.setAttribute("aria-hidden", "true");
+      x.textContent = "×";
+      btn.appendChild(text);
+      btn.appendChild(x);
+      chips.appendChild(btn);
+    });
+  }
+
+  function setSheetOpen(open) {
+    var btn = $("filtersBtn");
+    var layer = $("filtersLayer");
+    var backdrop = $("filtersBackdrop");
+    var panel = $("filtersPanel");
+    if (!btn || !layer || !panel) return;
+
+    if (!mobileFilters()) open = false;
+    sheetOpen = open;
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    layer.classList.toggle("is-open", open);
+    document.body.classList.toggle("filters-open", open);
+    if (backdrop) backdrop.hidden = !open;
+
+    if (open) {
+      panel.setAttribute("role", "dialog");
+      panel.setAttribute("aria-modal", "true");
+      panel.setAttribute("aria-labelledby", "filtersTitle");
+      panel.setAttribute("tabindex", "-1");
+      panel.focus();
+      return;
+    }
+
+    panel.removeAttribute("role");
+    panel.removeAttribute("aria-modal");
+    panel.removeAttribute("aria-labelledby");
+    panel.removeAttribute("tabindex");
+    if (document.activeElement && panel.contains(document.activeElement)) {
+      btn.focus();
+    }
+  }
+
+  function clearFilters() {
+    FILTER_FIELDS.forEach(function (f) {
+      var el = $(f.id);
+      if (el) el.value = "";
+    });
+    paint();
   }
 
   function query() {
@@ -359,6 +456,7 @@
   }
 
   function paint() {
+    syncFilterChrome();
     var q = query();
     var rows = laptops.filter(function (r) {
       return matches(r, q.q, q.brand, q.filters);
@@ -462,6 +560,39 @@
       el.addEventListener("change", paint);
     });
 
+    var filtersBtn = $("filtersBtn");
+    if (filtersBtn) {
+      filtersBtn.addEventListener("click", function () {
+        setSheetOpen(!sheetOpen);
+      });
+    }
+    var filtersDone = $("filtersDone");
+    if (filtersDone) {
+      filtersDone.addEventListener("click", function () {
+        setSheetOpen(false);
+      });
+    }
+    var filtersClear = $("filtersClear");
+    if (filtersClear) {
+      filtersClear.addEventListener("click", clearFilters);
+    }
+    var filtersBackdrop = $("filtersBackdrop");
+    if (filtersBackdrop) {
+      filtersBackdrop.addEventListener("click", function () {
+        setSheetOpen(false);
+      });
+    }
+    var filterChips = $("filterChips");
+    if (filterChips) {
+      filterChips.addEventListener("click", function (e) {
+        var chip = e.target.closest("[data-filter-id]");
+        if (!chip) return;
+        var sel = $(chip.getAttribute("data-filter-id"));
+        if (sel) sel.value = "";
+        paint();
+      });
+    }
+
     $("rows").addEventListener("click", function (e) {
       var btn = e.target.closest("[data-vote] .vote-b");
       if (btn) {
@@ -491,9 +622,15 @@
       var n = visibleColCount();
       var cells = document.querySelectorAll(".row-detail td");
       for (var i = 0; i < cells.length; i++) cells[i].colSpan = n;
+      if (sheetOpen && !mobileFilters()) setSheetOpen(false);
     });
 
     document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && sheetOpen) {
+        e.preventDefault();
+        setSheetOpen(false);
+        return;
+      }
       if (e.key === "/" && document.activeElement && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && document.activeElement.tagName !== "SELECT") {
         e.preventDefault();
         var q = $("q");
