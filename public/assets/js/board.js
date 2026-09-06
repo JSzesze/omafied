@@ -3,7 +3,14 @@
   "use strict";
 
   var STATUSES = ["works", "partial", "broken", "unknown"];
-  var FIELDS = ["wifi", "gpu", "sleep", "audio"];
+  var TIERS = ["daily", "works", "fiddly", "avoid"];
+  var BUILDS = ["tank", "solid", "meh", "unknown"];
+  var RUN_FIELDS = ["wifi", "gpu", "sleep", "audio"];
+  var LIKE_FIELDS = [
+    { key: "battery", label: "batt" },
+    { key: "build", label: "build" },
+    { key: "fingerprint", label: "fp" }
+  ];
 
   var laptops = [];
   var openId = null;
@@ -23,14 +30,35 @@
     return STATUSES.indexOf(s) >= 0 ? "st st-" + s : "st st-unknown";
   }
 
+  function tierClass(s) {
+    return TIERS.indexOf(s) >= 0 ? "tier tier-" + s : "tier tier-works";
+  }
+
+  function chipClass(key, value) {
+    if (key === "build") {
+      return BUILDS.indexOf(value) >= 0 ? "st st-build-" + value : "st st-unknown";
+    }
+    return stClass(value);
+  }
+
+  function money(n) {
+    if (n == null || n === "") return null;
+    return "$" + String(n);
+  }
+
   function matches(row, q, brand, filters) {
     if (brand && row.brand !== brand) return false;
-    for (var i = 0; i < FIELDS.length; i++) {
-      var f = FIELDS[i];
+    if (filters.tier && row.tier !== filters.tier) return false;
+    if (filters.battery && row.battery !== filters.battery) return false;
+    for (var i = 0; i < RUN_FIELDS.length; i++) {
+      var f = RUN_FIELDS[i];
       if (filters[f] && row[f] !== filters[f]) return false;
     }
     if (!q) return true;
-    var hay = [row.brand, row.model, row.year, row.notes, row.reporter]
+    var hay = [
+      row.brand, row.model, row.year, row.notes, row.reporter,
+      row.tier, row.sweet_spot, row.quirks, row.uniques, row.build
+    ]
       .map(function (v) { return v == null ? "" : String(v); })
       .join(" ")
       .toLowerCase();
@@ -73,12 +101,73 @@
       q: ($("q") && $("q").value || "").trim().toLowerCase(),
       brand: $("brandFilter") && $("brandFilter").value || "",
       filters: {
+        tier: $("tierFilter") && $("tierFilter").value || "",
+        battery: $("batteryFilter") && $("batteryFilter").value || "",
         wifi: $("wifiFilter") && $("wifiFilter").value || "",
         gpu: $("gpuFilter") && $("gpuFilter").value || "",
         sleep: $("sleepFilter") && $("sleepFilter").value || "",
         audio: $("audioFilter") && $("audioFilter").value || ""
       }
     };
+  }
+
+  function cell(cls, text) {
+    var s = document.createElement("span");
+    s.className = cls;
+    s.textContent = text;
+    return s;
+  }
+
+  function chip(cls, label, value) {
+    var wrap = document.createElement("span");
+    wrap.className = "chip";
+    var lbl = document.createElement("span");
+    lbl.className = "chip-lbl";
+    lbl.textContent = label;
+    var val = document.createElement("span");
+    val.className = cls;
+    val.textContent = value || "unknown";
+    wrap.appendChild(lbl);
+    wrap.appendChild(val);
+    return wrap;
+  }
+
+  function voteBox(r) {
+    var wrap = document.createElement("span");
+    wrap.className = "vote";
+    wrap.setAttribute("data-vote", r.id);
+
+    var up = document.createElement("button");
+    up.type = "button";
+    up.className = "vote-b";
+    up.setAttribute("data-dir", "1");
+    up.setAttribute("aria-label", "agree with this take");
+    up.textContent = "▲";
+
+    var n = document.createElement("span");
+    n.className = "vote-n";
+    n.textContent = String((r.agree_up || 0) - (r.agree_down || 0));
+
+    var down = document.createElement("button");
+    down.type = "button";
+    down.className = "vote-b";
+    down.setAttribute("data-dir", "-1");
+    down.setAttribute("aria-label", "disagree with this take");
+    down.textContent = "▼";
+
+    wrap.appendChild(up);
+    wrap.appendChild(n);
+    wrap.appendChild(down);
+    return wrap;
+  }
+
+  function costLine(r) {
+    var neu = money(r.cost);
+    var used = money(r.used_cost);
+    if (!neu && !used) return "—";
+    if (neu && used) return neu + " / used " + used;
+    if (neu) return neu;
+    return "used " + used;
   }
 
   function paint() {
@@ -113,31 +202,62 @@
       li.setAttribute("role", "button");
       li.setAttribute("aria-expanded", openId === r.id ? "true" : "false");
 
-      function cell(cls, text) {
-        var s = document.createElement("span");
-        s.className = cls;
-        s.textContent = text;
-        return s;
-      }
+      var main = document.createElement("div");
+      main.className = "row-main";
+      main.appendChild(cell("c-brand", esc(r.brand)));
+      main.appendChild(cell("c-model", esc(r.model)));
+      main.appendChild(cell("c-year", r.year == null ? "—" : String(r.year)));
+      main.appendChild(cell("c-tier " + tierClass(r.tier), r.tier || "works"));
+      main.appendChild(cell("c-sweet", r.sweet_spot || "—"));
+      main.appendChild(voteBox(r));
+      li.appendChild(main);
 
-      li.appendChild(cell("c-brand", esc(r.brand)));
-      li.appendChild(cell("c-model", esc(r.model)));
-      li.appendChild(cell("c-year", r.year == null ? "—" : String(r.year)));
+      var chips = document.createElement("div");
+      chips.className = "row-chips";
 
-      FIELDS.forEach(function (f) {
-        var s = cell("c-" + f + " " + stClass(r[f]), r[f] || "unknown");
-        li.appendChild(s);
+      var run = document.createElement("span");
+      run.className = "chip-group";
+      RUN_FIELDS.forEach(function (f) {
+        run.appendChild(chip("c-" + f + " " + stClass(r[f]), f, r[f] || "unknown"));
       });
+      chips.appendChild(run);
 
-      li.appendChild(cell("c-notes", r.notes || "—"));
-      li.appendChild(cell("c-reporter", r.reporter || "anon"));
+      var like = document.createElement("span");
+      like.className = "chip-group";
+      LIKE_FIELDS.forEach(function (f) {
+        like.appendChild(chip("c-" + f.key + " " + chipClass(f.key, r[f.key]), f.label, r[f.key] || "unknown"));
+      });
+      chips.appendChild(like);
+
+      chips.appendChild(cell("c-cost", costLine(r)));
+      chips.appendChild(cell("c-reporter", r.reporter || "anon"));
+      li.appendChild(chips);
       frag.appendChild(li);
 
       var detail = document.createElement("li");
       detail.className = "row-full";
-      var p = document.createElement("p");
-      p.textContent = r.notes || "no notes";
-      detail.appendChild(p);
+
+      function block(label, text) {
+        if (!text) return;
+        var h = document.createElement("p");
+        h.className = "detail-k";
+        h.textContent = label;
+        var p = document.createElement("p");
+        p.textContent = text;
+        detail.appendChild(h);
+        detail.appendChild(p);
+      }
+
+      block("sweet spot", r.sweet_spot);
+      block("quirks", r.quirks);
+      block("uniques", r.uniques);
+      block("notes", r.notes);
+      if (!r.sweet_spot && !r.quirks && !r.uniques && !r.notes) {
+        var emptyP = document.createElement("p");
+        emptyP.textContent = "no notes";
+        detail.appendChild(emptyP);
+      }
+
       var meta = document.createElement("p");
       meta.className = "meta";
       var when = "";
@@ -152,7 +272,9 @@
       meta.textContent = [
         r.reporter ? "reporter " + r.reporter : "anonymous",
         when,
-        r.year ? "year " + r.year : null
+        r.year ? "year " + r.year : null,
+        costLine(r) !== "—" ? costLine(r) : null,
+        (r.agree_up || 0) + " up / " + (r.agree_down || 0) + " down"
       ].filter(Boolean).join(" · ");
       detail.appendChild(meta);
       frag.appendChild(detail);
@@ -163,6 +285,38 @@
   function toggle(id) {
     openId = openId === id ? null : id;
     paint();
+  }
+
+  function applyVote(id, laptop) {
+    laptops = laptops.map(function (row) {
+      return row.id === id ? laptop : row;
+    });
+    paint();
+  }
+
+  function vote(id, direction) {
+    setStatus("voting");
+    fetch("/api/laptops/" + encodeURIComponent(id) + "/vote", {
+      method: "POST",
+      headers: { "content-type": "application/json", accept: "application/json" },
+      body: JSON.stringify({ direction: direction })
+    })
+      .then(function (r) {
+        return r.json().then(function (data) {
+          return { ok: r.ok, data: data };
+        });
+      })
+      .then(function (res) {
+        if (!res.ok || !res.data || !res.data.laptop) {
+          setStatus((res.data && res.data.error) || "vote failed");
+          return;
+        }
+        applyVote(id, res.data.laptop);
+        setStatus("ready");
+      })
+      .catch(function () {
+        setStatus("vote failed");
+      });
   }
 
   function load() {
@@ -186,7 +340,7 @@
   }
 
   function onReady() {
-    ["q", "brandFilter", "wifiFilter", "gpuFilter", "sleepFilter", "audioFilter"].forEach(function (id) {
+    ["q", "brandFilter", "tierFilter", "batteryFilter", "wifiFilter", "gpuFilter", "sleepFilter", "audioFilter"].forEach(function (id) {
       var el = $(id);
       if (!el) return;
       el.addEventListener("input", paint);
@@ -194,6 +348,17 @@
     });
 
     $("rows").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-vote] .vote-b");
+      if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        var box = btn.closest("[data-vote]");
+        var dir = Number(btn.getAttribute("data-dir"));
+        if (box && box.getAttribute("data-vote") && (dir === 1 || dir === -1)) {
+          vote(box.getAttribute("data-vote"), dir);
+        }
+        return;
+      }
       var row = e.target.closest(".row");
       if (!row || !row.dataset.id) return;
       toggle(row.dataset.id);
@@ -202,6 +367,7 @@
       if (e.key !== "Enter" && e.key !== " ") return;
       var row = e.target.closest(".row");
       if (!row || !row.dataset.id) return;
+      if (e.target.closest(".vote-b")) return;
       e.preventDefault();
       toggle(row.dataset.id);
     });

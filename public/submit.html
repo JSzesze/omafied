@@ -9,9 +9,8 @@
 <meta name="theme-color" content="#0a0b0a">
 <meta name="color-scheme" content="dark light">
 <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTOlOV.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUXskPMA.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/pxiKyp0ihIEF2isfFJU.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/GeistMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/GeistPixel-Square.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fonts.css">
 <link rel="stylesheet" href="/assets/css/style.css">
 </head>
@@ -34,7 +33,7 @@
     <div class="scan" aria-hidden="true"></div>
     <p class="intro-kicker">live submit · no account</p>
     <h2 class="intro-title">Report a laptop</h2>
-    <p class="intro-sub">Laptops only. Be honest — unknown and partial are better than a silent pass. Not official Omarchy.</p>
+    <p class="intro-sub">Run matrix plus like-it: tier, battery, build, sweet-spot. Unknown and partial beat a silent pass. Not official Omarchy.</p>
   </section>
 
   <section class="panel">
@@ -65,6 +64,8 @@
           <input id="reporter" name="reporter" type="text" maxlength="64" autocomplete="nickname" placeholder="handle or name">
           <p class="hint">optional · shown on the row</p>
         </div>
+
+        <p class="form-sec span-2">will it run</p>
 
         <div class="field span-2">
           <label>wifi</label>
@@ -109,6 +110,78 @@
               <button type="button" class="seg-b is-on" data-field="audio" data-value="unknown">unknown</button>
             </div>
           </div>
+        </div>
+
+        <p class="form-sec span-2">will I like it</p>
+
+        <div class="field span-2">
+          <label>tier</label>
+          <div class="status-seg" data-seg="tier">
+            <div class="seg">
+              <button type="button" class="seg-b" data-field="tier" data-value="daily">daily</button>
+              <button type="button" class="seg-b is-on" data-field="tier" data-value="works">works</button>
+              <button type="button" class="seg-b" data-field="tier" data-value="fiddly">fiddly</button>
+              <button type="button" class="seg-b" data-field="tier" data-value="avoid">avoid</button>
+            </div>
+          </div>
+          <p class="hint">daily = buy it · works = it runs · fiddly = evenings · avoid = skip</p>
+        </div>
+        <div class="field span-2">
+          <label>battery</label>
+          <div class="status-seg" data-seg="battery">
+            <div class="seg">
+              <button type="button" class="seg-b" data-field="battery" data-value="works">works</button>
+              <button type="button" class="seg-b" data-field="battery" data-value="partial">partial</button>
+              <button type="button" class="seg-b" data-field="battery" data-value="broken">broken</button>
+              <button type="button" class="seg-b is-on" data-field="battery" data-value="unknown">unknown</button>
+            </div>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>fingerprint</label>
+          <div class="status-seg" data-seg="fingerprint">
+            <div class="seg">
+              <button type="button" class="seg-b" data-field="fingerprint" data-value="works">works</button>
+              <button type="button" class="seg-b" data-field="fingerprint" data-value="partial">partial</button>
+              <button type="button" class="seg-b" data-field="fingerprint" data-value="broken">broken</button>
+              <button type="button" class="seg-b is-on" data-field="fingerprint" data-value="unknown">unknown</button>
+            </div>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>build</label>
+          <div class="status-seg" data-seg="build">
+            <div class="seg">
+              <button type="button" class="seg-b" data-field="build" data-value="tank">tank</button>
+              <button type="button" class="seg-b" data-field="build" data-value="solid">solid</button>
+              <button type="button" class="seg-b" data-field="build" data-value="meh">meh</button>
+              <button type="button" class="seg-b is-on" data-field="build" data-value="unknown">unknown</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field span-2">
+          <label for="sweet_spot">sweet spot</label>
+          <input id="sweet_spot" name="sweet_spot" type="text" maxlength="160" autocomplete="off" placeholder="Buy this trim / skip that one.">
+          <p class="hint">one line · shown on the row</p>
+        </div>
+        <div class="field span-2">
+          <label for="quirks">quirks</label>
+          <textarea id="quirks" name="quirks" maxlength="500" placeholder="The pain. Sleep, docks, mux, firmware."></textarea>
+        </div>
+        <div class="field span-2">
+          <label for="uniques">uniques</label>
+          <textarea id="uniques" name="uniques" maxlength="500" placeholder="Why pick this one over the rest."></textarea>
+        </div>
+        <div class="field">
+          <label for="cost">cost usd</label>
+          <input id="cost" name="cost" type="number" min="1" max="99999" step="1" inputmode="numeric" placeholder="1200">
+          <p class="hint">optional ballpark · not a live scrape</p>
+        </div>
+        <div class="field">
+          <label for="used_cost">used cost usd</label>
+          <input id="used_cost" name="used_cost" type="number" min="1" max="99999" step="1" inputmode="numeric" placeholder="800">
+          <p class="hint">optional</p>
         </div>
 
         <div class="field span-2">
