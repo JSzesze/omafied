@@ -11,6 +11,8 @@
     { key: "build", label: "build" },
     { key: "fingerprint", label: "fp" }
   ];
+  var COL_COUNT_WIDE = 9;
+  var COL_COUNT_NARROW = 3;
 
   var laptops = [];
   var openId = null;
@@ -20,10 +22,6 @@
   function setStatus(s) {
     var el = $("status");
     if (el) el.textContent = s;
-  }
-
-  function esc(s) {
-    return String(s == null ? "" : s);
   }
 
   function stClass(s) {
@@ -111,25 +109,31 @@
     };
   }
 
-  function cell(cls, text) {
-    var s = document.createElement("span");
-    s.className = cls;
-    s.textContent = text;
-    return s;
+  function runText(value) {
+    if (!value || value === "unknown") return "—";
+    return value;
   }
 
-  function chip(cls, label, value) {
-    var wrap = document.createElement("span");
-    wrap.className = "chip";
-    var lbl = document.createElement("span");
-    lbl.className = "chip-lbl";
-    lbl.textContent = label;
-    var val = document.createElement("span");
-    val.className = cls;
-    val.textContent = value || "unknown";
-    wrap.appendChild(lbl);
-    wrap.appendChild(val);
-    return wrap;
+  function costLine(r) {
+    var neu = money(r.cost);
+    var used = money(r.used_cost);
+    if (!neu && !used) return "—";
+    if (neu && used) return neu + " / used " + used;
+    if (neu) return neu;
+    return "used " + used;
+  }
+
+  function visibleColCount() {
+    return window.matchMedia("(max-width: 720px)").matches ? COL_COUNT_NARROW : COL_COUNT_WIDE;
+  }
+
+  function reportedOn(r) {
+    if (!r.created_at) return "";
+    var d = new Date(r.created_at);
+    if (isNaN(d.getTime())) return "";
+    return d.getUTCFullYear() + "-" +
+      String(d.getUTCMonth() + 1).padStart(2, "0") + "-" +
+      String(d.getUTCDate()).padStart(2, "0");
   }
 
   function voteBox(r) {
@@ -161,13 +165,197 @@
     return wrap;
   }
 
-  function costLine(r) {
+  function modelCell(r, open) {
+    var td = document.createElement("td");
+    td.className = "c-model";
+    td.scope = "row";
+
+    var mark = document.createElement("span");
+    mark.className = "expand-mark";
+    mark.setAttribute("aria-hidden", "true");
+    mark.textContent = open ? "▾" : "▸";
+
+    var stack = document.createElement("span");
+    stack.className = "model-stack";
+
+    var name = document.createElement("span");
+    name.className = "model-name";
+    name.textContent = r.model || "—";
+
+    var meta = document.createElement("span");
+    meta.className = "model-meta";
+    meta.textContent = [r.brand, r.year].filter(Boolean).join(" · ");
+
+    stack.appendChild(name);
+    if (meta.textContent) stack.appendChild(meta);
+    td.appendChild(mark);
+    td.appendChild(stack);
+    return td;
+  }
+
+  function priceCell(r) {
+    var td = document.createElement("td");
+    td.className = "c-price";
     var neu = money(r.cost);
     var used = money(r.used_cost);
-    if (!neu && !used) return "—";
-    if (neu && used) return neu + " / used " + used;
-    if (neu) return neu;
-    return "used " + used;
+    if (!neu && !used) {
+      td.textContent = "—";
+      return td;
+    }
+    if (neu) {
+      var a = document.createElement("span");
+      a.className = "price-new";
+      a.textContent = neu;
+      td.appendChild(a);
+    }
+    if (used) {
+      var b = document.createElement("span");
+      b.className = "price-used";
+      b.textContent = "used " + used;
+      td.appendChild(b);
+    }
+    return td;
+  }
+
+  function pair(label, value, valueClass) {
+    var item = document.createElement("div");
+    item.className = "detail-pair";
+    var dt = document.createElement("dt");
+    dt.textContent = label;
+    var dd = document.createElement("dd");
+    if (valueClass) dd.className = valueClass;
+    dd.textContent = value;
+    item.appendChild(dt);
+    item.appendChild(dd);
+    return item;
+  }
+
+  function prose(label, text) {
+    if (!text) return null;
+    var wrap = document.createElement("div");
+    wrap.className = "detail-block";
+    var h = document.createElement("p");
+    h.className = "detail-k";
+    h.textContent = label;
+    var p = document.createElement("p");
+    p.className = "detail-v";
+    p.textContent = text;
+    wrap.appendChild(h);
+    wrap.appendChild(p);
+    return wrap;
+  }
+
+  function detailRow(r, open) {
+    var tr = document.createElement("tr");
+    tr.className = "row-detail" + (open ? " is-open" : "");
+    tr.id = "detail-" + r.id;
+    if (!open) tr.hidden = true;
+
+    var td = document.createElement("td");
+    td.colSpan = visibleColCount();
+
+    var pin = document.createElement("div");
+    pin.className = "detail-pin";
+
+    var head = document.createElement("div");
+    head.className = "detail-head";
+    var tier = document.createElement("span");
+    tier.className = "detail-tier " + tierClass(r.tier);
+    tier.textContent = r.tier || "works";
+    var ident = document.createElement("p");
+    ident.className = "detail-ident";
+    ident.textContent = [r.brand, r.model, r.year].filter(Boolean).join(" · ");
+    head.appendChild(tier);
+    head.appendChild(ident);
+    pin.appendChild(head);
+
+    var dl = document.createElement("dl");
+    dl.className = "detail-dl";
+    RUN_FIELDS.forEach(function (f) {
+      dl.appendChild(pair(f, r[f] || "unknown", stClass(r[f])));
+    });
+    LIKE_FIELDS.forEach(function (f) {
+      dl.appendChild(pair(f.label, r[f.key] || "unknown", chipClass(f.key, r[f.key])));
+    });
+    dl.appendChild(pair("price", costLine(r)));
+    pin.appendChild(dl);
+
+    var proseWrap = document.createElement("div");
+    proseWrap.className = "detail-prose";
+    var blocks = [
+      prose("sweet spot", r.sweet_spot),
+      prose("quirks", r.quirks),
+      prose("uniques", r.uniques),
+      prose("notes", r.notes)
+    ].filter(Boolean);
+    blocks.forEach(function (b) { proseWrap.appendChild(b); });
+    if (!blocks.length) {
+      var emptyP = document.createElement("p");
+      emptyP.className = "detail-v";
+      emptyP.textContent = "no notes";
+      proseWrap.appendChild(emptyP);
+    }
+    pin.appendChild(proseWrap);
+
+    var voteLine = document.createElement("div");
+    voteLine.className = "detail-vote";
+    voteLine.appendChild(voteBox(r));
+    var counts = document.createElement("span");
+    counts.className = "detail-vote-n";
+    counts.textContent = (r.agree_up || 0) + " up / " + (r.agree_down || 0) + " down";
+    voteLine.appendChild(counts);
+    pin.appendChild(voteLine);
+
+    var meta = document.createElement("p");
+    meta.className = "meta";
+    meta.textContent = [
+      r.reporter ? "reporter " + r.reporter : "anonymous",
+      reportedOn(r),
+      r.year ? "year " + r.year : null
+    ].filter(Boolean).join(" · ");
+    pin.appendChild(meta);
+
+    td.appendChild(pin);
+    tr.appendChild(td);
+    return tr;
+  }
+
+  function collapsedRow(r, open) {
+    var tr = document.createElement("tr");
+    tr.className = "row" + (open ? " is-open" : "");
+    tr.dataset.id = r.id;
+    tr.tabIndex = 0;
+    tr.setAttribute("aria-expanded", open ? "true" : "false");
+    tr.setAttribute("aria-controls", "detail-" + r.id);
+
+    tr.appendChild(modelCell(r, open));
+
+    var tier = document.createElement("td");
+    tier.className = "c-tier " + tierClass(r.tier);
+    tier.textContent = r.tier || "works";
+    tr.appendChild(tier);
+
+    var sweet = document.createElement("td");
+    sweet.className = "c-sweet";
+    sweet.textContent = r.sweet_spot || "—";
+    if (r.sweet_spot) sweet.title = r.sweet_spot;
+    tr.appendChild(sweet);
+
+    RUN_FIELDS.forEach(function (f) {
+      var cell = document.createElement("td");
+      cell.className = "c-run " + stClass(r[f]);
+      cell.textContent = runText(r[f]);
+      tr.appendChild(cell);
+    });
+
+    tr.appendChild(priceCell(r));
+
+    var voteTd = document.createElement("td");
+    voteTd.className = "c-vote";
+    voteTd.appendChild(voteBox(r));
+    tr.appendChild(voteTd);
+
+    return tr;
   }
 
   function paint() {
@@ -179,105 +367,29 @@
     var list = $("rows");
     var empty = $("empty");
     var note = $("count");
+    var wrap = $("tableWrap");
     list.innerHTML = "";
 
     if (!rows.length) {
       empty.hidden = false;
       empty.textContent = laptops.length ? "no laptops match" : "no reports yet";
+      if (wrap) wrap.hidden = true;
       if (note) note.textContent = "0 reports";
       return;
     }
     empty.hidden = true;
+    if (wrap) wrap.hidden = false;
     if (note) {
       note.textContent = rows.length + " report" + (rows.length === 1 ? "" : "s") +
-        (rows.length !== laptops.length ? " · " + laptops.length + " total" : "");
+        (rows.length !== laptops.length ? " · " + laptops.length + " total" : "") +
+        " · expand a row for detail";
     }
 
     var frag = document.createDocumentFragment();
     rows.forEach(function (r) {
-      var li = document.createElement("li");
-      li.className = "row" + (openId === r.id ? " is-open" : "");
-      li.dataset.id = r.id;
-      li.tabIndex = 0;
-      li.setAttribute("role", "button");
-      li.setAttribute("aria-expanded", openId === r.id ? "true" : "false");
-
-      var main = document.createElement("div");
-      main.className = "row-main";
-      main.appendChild(cell("c-brand", esc(r.brand)));
-      main.appendChild(cell("c-model", esc(r.model)));
-      main.appendChild(cell("c-year", r.year == null ? "—" : String(r.year)));
-      main.appendChild(cell("c-tier " + tierClass(r.tier), r.tier || "works"));
-      main.appendChild(cell("c-sweet", r.sweet_spot || "—"));
-      main.appendChild(voteBox(r));
-      li.appendChild(main);
-
-      var chips = document.createElement("div");
-      chips.className = "row-chips";
-
-      var run = document.createElement("span");
-      run.className = "chip-group";
-      RUN_FIELDS.forEach(function (f) {
-        run.appendChild(chip("c-" + f + " " + stClass(r[f]), f, r[f] || "unknown"));
-      });
-      chips.appendChild(run);
-
-      var like = document.createElement("span");
-      like.className = "chip-group";
-      LIKE_FIELDS.forEach(function (f) {
-        like.appendChild(chip("c-" + f.key + " " + chipClass(f.key, r[f.key]), f.label, r[f.key] || "unknown"));
-      });
-      chips.appendChild(like);
-
-      chips.appendChild(cell("c-cost", costLine(r)));
-      chips.appendChild(cell("c-reporter", r.reporter || "anon"));
-      li.appendChild(chips);
-      frag.appendChild(li);
-
-      var detail = document.createElement("li");
-      detail.className = "row-full";
-
-      function block(label, text) {
-        if (!text) return;
-        var h = document.createElement("p");
-        h.className = "detail-k";
-        h.textContent = label;
-        var p = document.createElement("p");
-        p.textContent = text;
-        detail.appendChild(h);
-        detail.appendChild(p);
-      }
-
-      block("sweet spot", r.sweet_spot);
-      block("quirks", r.quirks);
-      block("uniques", r.uniques);
-      block("notes", r.notes);
-      if (!r.sweet_spot && !r.quirks && !r.uniques && !r.notes) {
-        var emptyP = document.createElement("p");
-        emptyP.textContent = "no notes";
-        detail.appendChild(emptyP);
-      }
-
-      var meta = document.createElement("p");
-      meta.className = "meta";
-      var when = "";
-      if (r.created_at) {
-        var d = new Date(r.created_at);
-        if (!isNaN(d.getTime())) {
-          when = d.getUTCFullYear() + "-" +
-            String(d.getUTCMonth() + 1).padStart(2, "0") + "-" +
-            String(d.getUTCDate()).padStart(2, "0");
-        }
-      }
-      meta.textContent = [
-        r.reporter ? "reporter " + r.reporter : "anonymous",
-        when,
-        r.year ? "year " + r.year : null,
-        costLine(r) !== "—" ? costLine(r) : null,
-        (r.agree_up || 0) + " up / " + (r.agree_down || 0) + " down"
-      ].filter(Boolean).join(" · ");
-      detail.appendChild(meta);
-      frag.appendChild(detail);
+      var open = openId === r.id;
+      frag.appendChild(collapsedRow(r, open));
+      frag.appendChild(detailRow(r, open));
     });
     list.appendChild(frag);
   }
@@ -285,6 +397,9 @@
   function toggle(id) {
     openId = openId === id ? null : id;
     paint();
+    if (!openId) return;
+    var el = document.getElementById("detail-" + openId);
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: "nearest" });
   }
 
   function applyVote(id, laptop) {
@@ -359,17 +474,23 @@
         }
         return;
       }
-      var row = e.target.closest(".row");
+      var row = e.target.closest("tr.row");
       if (!row || !row.dataset.id) return;
       toggle(row.dataset.id);
     });
     $("rows").addEventListener("keydown", function (e) {
       if (e.key !== "Enter" && e.key !== " ") return;
-      var row = e.target.closest(".row");
+      var row = e.target.closest("tr.row");
       if (!row || !row.dataset.id) return;
       if (e.target.closest(".vote-b")) return;
       e.preventDefault();
       toggle(row.dataset.id);
+    });
+
+    window.addEventListener("resize", function () {
+      var n = visibleColCount();
+      var cells = document.querySelectorAll(".row-detail td");
+      for (var i = 0; i < cells.length; i++) cells[i].colSpan = n;
     });
 
     document.addEventListener("keydown", function (e) {
