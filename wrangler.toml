@@ -15,7 +15,7 @@ compatibility_date = "2026-09-06"
 workers_dev = true
 
 # CF placeholder — replace with the account id from the Cloudflare dashboard.
-account_id = "CF_ACCOUNT_ID"
+account_id = "37b4b57318320f39d369356c92738801"
 
 [assets]
 directory = "./public"
@@ -28,5 +28,5 @@ run_worker_first = ["/api/*"]
 binding = "DB"
 database_name = "omafied"
 # CF placeholder — replace with the uuid printed by `wrangler d1 create omafied`.
-database_id = "CF_D1_DATABASE_ID"
+database_id = "5b21dcf0-ffdd-457a-9de1-d46e74fe3b37"
 migrations_dir = "migrations"
