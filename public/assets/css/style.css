@@ -97,6 +97,19 @@ a, button { -webkit-tap-highlight-color: transparent; }
   border-bottom: 1px solid var(--bd);
 }
 
+/* Browse: table is the scrollport so thead can stick. Submit still page-scrolls. */
+@media (min-width: 721px) {
+  .app:has(.table-wrap) {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+  .app:has(.table-wrap) .panel {
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
 /* ── header ──────────────────────────────────────────── */
 
 .bar {
@@ -962,7 +975,12 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 
 @media (max-width: 720px) {
-  .table-wrap { min-height: 18rem; }
+  .table-wrap {
+    flex: none;
+    min-height: 0;
+    overflow: visible;
+    border-bottom: 0;
+  }
 
   .board { width: 100%; }
 
@@ -970,8 +988,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .th-price, .c-price,
   .th-vote, .c-vote { display: none; }
 
-  .th-model, .c-model { width: 42%; }
-  .th-tier, .c-tier { width: 5.6rem; }
+  .th-model, .c-model { width: 9.6rem; }
+  .th-tier, .c-tier { width: 4.8rem; }
   .th-sweet, .c-sweet { width: auto; }
   .board thead .th-sweet,
   .board tbody .c-sweet { padding-right: 16px; }
@@ -1009,7 +1027,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .intro-title { font-size: 30px; }
   .picker-btn { min-width: 140px; }
   .detail-dl { grid-template-columns: 1fr; }
-  .th-model, .c-model { width: 46%; }
+  .th-model, .c-model { width: 8.8rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
