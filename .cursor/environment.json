@@ -1,0 +1,11 @@
+{
+  "name": "Omafied",
+  "install": "npm ci && npx wrangler d1 migrations apply omafied --local",
+  "terminals": [
+    {
+      "name": "wrangler-dev",
+      "command": "npx wrangler dev --ip 127.0.0.1 --port 8787"
+    }
+  ],
+  "ports": [8787]
+}
